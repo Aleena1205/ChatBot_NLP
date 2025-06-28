@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- your existing <head> content unchanged -->
+      <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #DDEB9D, #A0C878);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #f5f5dc;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .decorative-elements {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            z-index: 1;
+        }
+
+        .decorative-elements::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: #2d5016;
+            border-radius: 0 100% 0 100%;
+            transform: rotate(-45deg);
+        }
+
+        .decorative-elements::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: #ffd700;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform: rotate(20deg);
+        }
+
+        .decorative-elements-right {
+            position: absolute;
+            bottom: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            z-index: 1;
+        }
+
+        .decorative-elements-right::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: #2d5016;
+            border-radius: 100% 0 100% 0;
+            transform: rotate(45deg);
+        }
+
+        .decorative-elements-right::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            width: 45px;
+            height: 45px;
+            background: #ff69b4;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform: rotate(-30deg);
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #2d5016;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background: #f4c2a1;
+            color: #333;
+            font-size: 1.1em;
+            outline: none;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: #f0b890;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: #888;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .submit-btn {
+            background: #d4a5a5;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn:hover {
+            background: #c49595;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .output-container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .output-field {
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background: #d2b48c;
+            color: #333;
+            font-size: 1.1em;
+            min-height: 150px;
+            font-family: inherit;
+            line-height: 1.6;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .user-message {
+            background: #e8f4fd;
+            margin-left: 20px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message {
+            background: #f0f8e8;
+            margin-right: 20px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .user-label {
+            color: #1e88e5;
+        }
+
+        .bot-label {
+            color: #43a047;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .input-field {
+                min-height: 100px;
+                padding: 15px;
+            }
+            
+            .submit-btn {
+                padding: 12px 30px;
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <!-- your existing HTML content unchanged -->
+     <div class="container">
+        <div class="decorative-elements"></div>
+        <div class="decorative-elements-right"></div>
+        
+        <h1>DataBuddy</h1>
+        <p class="subtitle">Your guide through the world of data.....</p>
+        
+        <div class="input-container">
+            <textarea 
+                id="userInput" 
+                class="input-field" 
+                placeholder="Type your question....."
+                rows="4"
+            ></textarea>
+        </div>
+        
+        <div class="submit-container">
+            <button id="submitBtn" class="submit-btn" onclick="submitQuestion()">
+                Submit
+            </button>
+        </div>
+        
+        <div class="loading" id="loading">Processing your question...</div>
+        
+        <div class="output-container">
+            <div id="chatOutput" class="output-field">
+                The answer of the above question will be displayed here in this box
+            </div>
+        </div>
+    </div>
+  </div>
+
+<script>
+    let chatHistory = [];
+
+    async function submitQuestion() {
+        const userInput = document.getElementById('userInput');
+        const chatOutput = document.getElementById('chatOutput');
+        const loading = document.getElementById('loading');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        const question = userInput.value.trim();
+        
+        if (!question || question === 'Type your question.....') {
+            alert('Please enter a question first!');
+            return;
+        }
+        
+        loading.classList.add('show');
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+
+        try {
+            const response = await fetch('/api/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: question })
+            });
+            const data = await response.json();
+            const answer = data.answer;
+
+            chatHistory.push({
+                question: question,
+                answer: answer,
+                timestamp: new Date()
+            });
+            
+            updateChatDisplay();
+
+            userInput.value = '';
+            userInput.focus();
+
+        } catch (error) {
+            alert('Error communicating with the server.');
+            console.error(error);
+        }
+
+        loading.classList.remove('show');
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+    }
+
+    function updateChatDisplay() {
+        const chatOutput = document.getElementById('chatOutput');
+        
+        if (chatHistory.length === 0) {
+            chatOutput.innerHTML = 'The answer of the above question will be displayed here in this box';
+            return;
+        }
+        
+        let chatHtml = '';
+        chatHistory.forEach((chat) => {
+            chatHtml += `
+                <div class="chat-message user-message">
+                    <div class="message-label user-label">You:</div>
+                    <div>${chat.question}</div>
+                </div>
+                <div class="chat-message bot-message">
+                    <div class="message-label bot-label">Bot:</div>
+                    <div>${chat.answer}</div>
+                </div>
+            `;
+        });
+        
+        chatOutput.innerHTML = chatHtml;
+        chatOutput.scrollTop = chatOutput.scrollHeight;
+    }
+
+    // Allow Enter key to submit (Shift+Enter for new line)
+    document.getElementById('userInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            submitQuestion();
+        }
+    });
+
+    // Placeholder handlers
+    document.getElementById('userInput').addEventListener('focus', function() {
+        if (this.value === 'Type your question.....') this.value = '';
+    });
+    document.getElementById('userInput').addEventListener('blur', function() {
+        if (this.value.trim() === '') this.value = 'Type your question.....';
+    });
+</script>
+</body>
+</html>
